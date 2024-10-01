@@ -9,7 +9,7 @@ import CampaignDetails from './CampaignDetails';
 
 const App = () => {
   return (
-    <ThirdwebProvider desiredChainId={ChainId.Sepolia}>
+    <ThirdwebProvider desiredChainId={11155111}>
       <Home/>
       <Profile/>
       <CreateCampaign/>

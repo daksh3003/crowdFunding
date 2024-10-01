@@ -13,21 +13,23 @@ export const StateContextProvider = ({ children }) => {
 
   const publishCampaign = async (form) => {
     try {
-      const data = await createCampaign({
-        args: [
-          address,
-          form.title,
-          form.description,
-          ethers.utils.parseEther(form.target),
-          new Date(form.deadline).getTime(),
-          form.image,
-        ],
-      });
-      console.log("Contract call success", data);
+        const data = await createCampaign({
+            args: [
+                address, // owner
+                form.title, // title
+                form.description, // description
+                String(form.target), // Ensure target is a string
+                new Date(form.deadline).getTime(), // deadline,
+                form.image,
+            ],
+        });
+
+        console.log("contract call success", data);
     } catch (error) {
-      console.error("Contract call failed", error);
+        console.log("contract call failure", error);
     }
-  };
+};
+
 
   const getCampaigns = async () => {
     const campaigns = await contract.call('getCampaigns');
@@ -51,9 +53,16 @@ export const StateContextProvider = ({ children }) => {
   };
 
   const donate = async (pId, amount) => {
-    const data = await contract.call('donateToCampaign', [pId], { value: ethers.utils.parseEther(amount) });
-    return data;
-  };
+    try {
+        // Ensure amount is a string
+        const amountInEther = String(amount); 
+        const data = await contract.call('donateToCampaign', [pId], { value: ethers.utils.parseEther(amountInEther) });
+        return data;
+    } catch (error) {
+        console.error("Donation failed:", error);
+    }
+};
+
 
   const getDonations = async (pId) => {
     const donations = await contract.call('getDonators', [pId]);
